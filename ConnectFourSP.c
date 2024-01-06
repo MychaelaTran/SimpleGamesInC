@@ -3,19 +3,6 @@
 #include <ctype.h>
 #include <time.h>
 #include <stdbool.h> 
-//#include "Board.c"
-#define RED     "\033[1;31m"
-#define YELLOW  "\033[1;33m"
-#define RESET   "\033[0m"
-#define YELLOW_O    YELLOW " o " RESET
-
-
-
-// This function clears the input buffer
-//void clearInputBuffer() {
-//    int c;
-//    while ((c = getchar()) != '\n' && c != EOF);
-//}
 
 
 // defined for loops
@@ -401,22 +388,3 @@ char checkWinner()
     return ' ';
 }
 
-/*
-
-However, in your computerMove() function, you have a loop where compCol is generated using rand() % 7. 
-The loop continues until a valid move is found. If compCol is not a valid move (i.e., the column is already full), 
-you generate a new random compCol within the loop.
-
-This could potentially result in the same random number being generated again, 
-especially if the loop iterates quickly. If you want to avoid this, you can move the srand(time(NULL)) 
-outside of the loop so that it's only called once at the beginning of the program. 
-This way, you ensure that the random number generator is seeded only once, and subsequent calls to rand() 
-will produce a more varied sequence.
-
-Seeding Once: srand(time(NULL)) in main ensures that the random number generator is seeded once at the start of the program.
-
-Variability: If you seed the random number generator inside a loop, and the loop runs quickly, you might end up using the same seed value in quick succession, leading to less variability in the generated random numbers.
-
-Consistency: Seeding once at the beginning ensures that the sequence of random numbers is more consistent between program runs.
-
-*/
