@@ -237,7 +237,7 @@ void computerMove()
         }
     } while (compValid == true);
 
-    printf("The computer played row: %d and col: %d \n", compRow, compCol);
+  
 }
 
 
