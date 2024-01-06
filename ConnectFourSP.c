@@ -244,6 +244,7 @@ void computerMove()
 
 void playerMove()
 {
+    char cPlay;
     int isInt = 0;
     int playerCol;
     int playerRow = 5;
@@ -258,45 +259,52 @@ void playerMove()
         do
         {
             // this isInt will be equal to the amount of numbers scanned ie 1   
-            scanf(" %d%*c", &playerCol);
+            scanf(" %c%*c", &cPlay);
             printf("\n");
             
-
-
-            // if the user inputs a column number out of range, it will not be a valid move and print that 
-            if(playerCol > 7 || playerCol < 1)
+            if(isalpha(cPlay))
             {
-                
-                printf("Please enter a valid move (cols 1-7): ");
+                printf("Please enter a number not a letter: ");
                 valid = false;
             }
-            
-            // check if the spot is already taken
             else
             {
-                // Check if the column is full
-                for (int i = rows - 1; i >= 0; i--)
+
+                playerCol = cPlay - '0';
+                // if the user inputs a column number out of range, it will not be a valid move and print that 
+                if(playerCol > 7 || playerCol < 1)
                 {
-                    if (board[i][playerCol - 1] == ' ')
+                    
+                    printf("Please enter a valid move (cols 1-7): ");
+                    valid = false;
+                }
+                
+                // check if the spot is already taken
+                else
+                {
+                    // Check if the column is full
+                    for (int i = rows - 1; i >= 0; i--)
                     {
-                        board[i][playerCol - 1] = 'o';
-                        validCol = false;
-                        break;
+                        if (board[i][playerCol - 1] == ' ')
+                        {
+                            board[i][playerCol - 1] = 'o';
+                            validCol = false;
+                            break;
+                        }
+                    }
+
+                    if (validCol)
+                    {
+                        printf("This column is full, please choose another column: ");
                     }
                 }
-
-                if (validCol)
-                {
-                    printf("This column is full, please choose another column: ");
-                }
-            }
-        } while (validCol);
+            } 
+        }while (validCol);
 
         valid = false;  // Set valid to false outside the inner loop
 
     } while (valid);
 }
-
 
 
 bool checkSpaces()
