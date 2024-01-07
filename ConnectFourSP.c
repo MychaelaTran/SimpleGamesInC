@@ -182,26 +182,32 @@ void clearBoard()
 
 void displayBoard()
 {
+
+//The YELLOW is defined that contains the ANSI escape code for yellow text. 
+//After printing the character, RESET is used to reset the text color to the default.
+
     for (i = 0; i < rows; i++)
     {
         for (j = 0; j < cols; j++)
         {
-            // this lets us able to print the value in each box on board
-            printf(" %c ", board[i][j]);
+            // Check the value in each box on the board
+            if (board[i][j] == 'o')
+                printf(YELLOW " %c " RESET, board[i][j]);  
+            else if (board[i][j] == 'x')
+                printf(RED " %c " RESET, board[i][j]);     // Print red 'x'
+            else
+                printf(" %c ", board[i][j]);
 
             // we do this because we want the | to only be printed in the middle not edge so when j = 6 is no tless than 7-1(6) so we dont print at end 
             //and it ensured we print | at each row bc it is independent of the row just column 
             if (j < cols - 1)
-            {
                 printf("|");
-            }
-
         }
 
         // we do tbis bc we want row seperators on the middle not end to make the board rowless on the edge
         // by doing this it ownr print one of these on the last one 
         //since ut prrints the inner for loop first we dont print a first row on top either 
-        if(i < rows -1)
+        if (i < rows - 1)
             printf("\n---|---|---|---|---|---|---\n");
     }
     printf("\n");
