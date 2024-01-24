@@ -17,7 +17,7 @@ const int rows = 6;
 // # of cols
 const int cols = 7;
 // size of board
-char board[6][7];
+char board[rows][cols];
 // winner
 char winner = ' ';
 // bool to determmine if use wants to play or npot(used in questionPlay funciton)
@@ -41,6 +41,9 @@ char checkWinner();
 bool questionPlay(int playNumber);
 // function that prints winner message
 void winnerMessage(char winner);
+bool playerCloseWin(int row, int col);
+bool checkWinInput(int row, int col);
+
 
 int main()
 {
@@ -218,36 +221,68 @@ void displayBoard()
 
 void computerMove()
 {
-    int compRow = 5;
-    int compCol;
+    bool compValidWin = true;
+    bool compValidRand = true;
+    bool playerWin = true;
 
-    // seed the time so it can be random
-
-    // col num will be a random num from 0-6
-    compCol = rand() % 7;
-    bool compValid = true;
-
-    do
+    // Check for a winning move
+    for (int compCol = 0; compCol < cols && compValidWin; compCol++)
     {
-        for (i = 5; i >= 0; i--)
+        for (int i = rows - 1; i >= 0; i--)
+        {
+            if (board[i][compCol] == ' ')
+            {
+                if (checkWinInput(i, compCol))
+                {
+                    board[i][compCol] = 'x';
+                    compValidWin = false;
+                    compValidRand = false;
+                    playerWin = false;
+                    return;
+                }
+                break;
+            }
+
+        }
+    }
+
+    // Block the player from winning
+    for (int compCol = 0; compCol < cols && playerWin; compCol++)
+    {
+        for (int i = rows - 1; i > 0; i--)
+        {
+            if (board[i][compCol] == ' ')
+            {
+                if (playerCloseWin(i, compCol))
+                {
+                    board[i][compCol] = 'x';
+                    compValidWin = false;
+                    compValidRand = false;
+                    playerWin = false;  // Set playerWin to true if a blocking move is made
+                    return;
+                }
+                break;
+            }
+
+        }
+    }
+
+    // If no winning move or blocking move, make a random move
+    while (compValidRand)
+    {
+        int compCol = rand() % cols;
+        for (int i = rows - 1; i >= 0; i--)
         {
             if (board[i][compCol] == ' ')
             {
                 board[i][compCol] = 'x';
-                compValid = false;
+                compValidRand = false;
                 break;
             }
         }
-
-        // If the column is full, choose a different column
-        if (compValid)
-        {
-            compCol = rand() % 7;
-        }
-    } while (compValid == true);
-
-  
+    }
 }
+
 
 
 
@@ -315,6 +350,140 @@ void playerMove()
     } while (valid);
 }
 
+// make this function check for the input of the row and col from the pc if teh plahyer
+// is one away from winning and if so block it
+// do this by checking the block below and above and to the left and right and diagnols
+bool playerCloseWin(int row, int col)
+{
+    // the general jist of this is to see if the count of 'o's is three then the player can win
+    // count is 3 in the diff directions 
+    // Horizontal Check
+    int adjCount = 0;
+
+    //LeftCount
+    for (int x = col - 1; x >= 0; x--) //we loop through the cols with the input row(to check orizontal)
+    // we move the cols to the right 
+    {
+        if (board[row][x] == 'o')
+        {
+            adjCount++;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    //RightCount
+    for (int x = col + 1; x < cols; x++) // now we checl the cols to the left (add this count to a counter to see if it'll eual 3)
+    {
+        if (board[row][x] == 'o')
+        {
+            adjCount++;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    if (adjCount >= 3) // if the ocunt is greater or equal to 3 then we return true, the player can win next move
+    {
+        return true;
+    }
+
+    //Vertical Check
+    int verticalCount = 0; // the count is initialized to 0 
+    for (int x = row - 1; x >= 0; x--) // we set the row ewaul to the input row and check down 
+    {
+        if (board[x][col] == 'o') // if there is an o then we add one to the count
+        {
+            verticalCount++;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    if (verticalCount >= 3) //if there are more tan 3 'o's in a row then we retur true and play the move inputted by pc
+    {
+        return true;
+    }
+
+    //Diagonal up right check
+    int diagCount = 0;
+    for (int step = 1, x = 1; col + step < cols && row - step >= 0; step++) // we start step (going up or down) at 1 
+    // if the input col + step is under cols need to be true (dont wanna go off board) 
+    // if in put row - step is greater than 0 needs to be true (not go off the board)
+    
+    {
+        if (board[row - step][col + step] == 'o') //if the row we're checking minus the step (row ) and the col+ step for cols 
+        // is 0 ie we went one up and one right if its an o we add one to daig count
+        {
+            diagCount++;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    for (int step = 1, x = 1; col - step >= 0 && row + step < rows; step++) //same idea here but we go opposite direction
+    //ie we go one row down (row+step) and one row left (col-stepo)
+    // check this if it equals o
+    {
+        if (board[row + step][col - step] == 'o')
+        {
+            diagCount++;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    if (diagCount >= 3) // count greater or equal to 3 we reutn true they can win here
+    {
+        return true;
+    }
+
+    diagCount = 0; 
+
+    //Diagonal down right check
+    for (int step = 1, x = 1; col + step < cols && row + step <= rows; step++)
+    {
+        if (board[row + step][col + step] == 'o')
+        {
+            diagCount++;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    for (int step = 1, x = 1; col - step >= 0 && row - step >= 0; step++) //same idea here but checking diagonal down right (opposite of one aobve)
+    {
+        if (board[row - step][col - step] == 'o')
+        {
+            diagCount++;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    if (diagCount >= 3) 
+    {
+        return true;
+    }
+
+    return false;
+
+}
+
 
 bool checkSpaces()
 {
@@ -331,6 +500,21 @@ bool checkSpaces()
     }
     // no free spaces were foujd
     return false;
+}
+
+bool checkWinInput(int row, int col)
+{
+    board[row][col] = 'x';
+    if (checkWinner() != ' ')
+    {
+        return true;
+
+    }
+    else{
+        board[row][col] = ' ';
+        return false;
+    }
+
 }
 
 char checkWinner()
@@ -405,3 +589,7 @@ char checkWinner()
     return ' ';
 }
 
+
+
+
+*/
