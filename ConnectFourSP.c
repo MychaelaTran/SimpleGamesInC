@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <time.h>
-#include <stdbool.h> 
+#include <stdbool.h>
 #define RED     "\033[1;31m"
 #define YELLOW  "\033[1;33m"
 #define RESET   "\033[0m"
@@ -394,7 +394,7 @@ bool playerCloseWin(int row, int col)
 
     //Vertical Check
     int verticalCount = 0; // the count is initialized to 0 
-    for (int x = row - 1; x >= 0; x--) // we set the row ewaul to the input row and check down 
+    for (int x = row +1; x <= rows; x++) // we set the row ewaul to the input row and check down 
     {
         if (board[x][col] == 'o') // if there is an o then we add one to the count
         {
@@ -589,7 +589,3 @@ char checkWinner()
     return ' ';
 }
 
-
-
-
-*/
